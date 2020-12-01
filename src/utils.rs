@@ -13,8 +13,10 @@ pub fn download(puzzle_number: usize, session: &str) -> Result<String, Error> {
     if !input_path.exists() {
         let url_to_get = format!("https://adventofcode.com/2020/day/{}/input", puzzle_number);
         let client = reqwest::Client::new();
-        std::fs::create_dir(input_path.parent().unwrap())
-            .with_context(|_| format!("Could not create folder `{}`", input_path.parent().unwrap().display()))?;
+        if !input_path.parent().unwrap().exists() {
+            std::fs::create_dir(input_path.parent().unwrap())
+                .with_context(|_| format!("Could not create folder `{}`", input_path.parent().unwrap().display()))?;
+        }
         std::fs::write(input_path, client.get(&url_to_get)
             .header("cookie", format!("session={}", session))
             .send()?
@@ -72,6 +74,7 @@ impl Ord for Pos {
     }
 }
 
+#[allow(dead_code)]
 pub fn astar(room_map: &HashMap<Pos, char>, from: Pos, to: Pos) -> Option<usize> {
     let mut visited: HashSet<Pos> = HashSet::new();
     let mut queue = BinaryHeap::new();
