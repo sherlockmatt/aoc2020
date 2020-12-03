@@ -18,12 +18,10 @@ pub fn run(input: String) -> Vec<String> {
 
     let mut slopes: HashMap<Pos, usize> = [(Pos{x:1, y:1}, 0), (Pos{x:1, y:3}, 0), (Pos{x:1, y:5}, 0), (Pos{x:1, y:7}, 0), (Pos{x:2, y:1}, 0)].iter().cloned().collect();
     for (slope, trees) in slopes.iter_mut() {
-        for y in 0..height {
-            if y % slope.x == 0 {  // Only check rows for which the slope is on an integer position
-                let x = ((slope.y * y) / slope.x) % width;  // This divide will always produce an integer, because we can only get here when y % s.x == 0
-                if map.contains(&Pos { x, y }) {
-                    *trees += 1;
-                }
+        for y in (0..height).step_by(slope.x) {  // Only check rows for which the slope is on an integer position
+            let x = ((slope.y * y) / slope.x) % width;  // This divide will always produce an integer, because we can only get here when slope.x is a factor of y
+            if map.contains(&Pos { x, y }) {
+                *trees += 1;
             }
         }
     }
