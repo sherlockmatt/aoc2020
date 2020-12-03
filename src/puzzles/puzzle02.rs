@@ -27,3 +27,16 @@ pub fn run(input: String) -> Vec<String> {
 
     return answers;
 }
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn example1() {
+        let input = "1-3 a: abcde
+1-3 b: cdefg
+2-9 c: ccccccccc".to_string();
+        assert_eq!(run(input), vec!["2".to_string(), "1".to_string()]);
+    }
+}

@@ -42,3 +42,19 @@ pub fn run(input: String) -> Vec<String> {
 
     return answers;
 }
+
+#[cfg(test)]
+mod tests {
+    use super::run;
+
+    #[test]
+    fn example1() {
+        let input = "1721
+979
+366
+299
+675
+1456".to_string();
+        assert_eq!(run(input), vec!["514579".to_string(), "241861950".to_string()]);
+    }
+}
