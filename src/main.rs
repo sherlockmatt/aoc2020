@@ -1,6 +1,8 @@
 #[macro_use]
 extern crate failure;
 extern crate exitfailure;
+#[macro_use]
+extern crate lazy_static;
 
 use structopt::StructOpt;
 use failure::ResultExt;
