@@ -1,7 +1,10 @@
-pub fn run(_input: String) -> Vec<String> {
+use std::collections::HashSet;
+
+pub fn run(input: String) -> Vec<String> {
     let mut answers: Vec<String> = Vec::new();
 
-    answers.push(format!("Not implemented yet."));
+    answers.push(format!("{}", input.split("\n\n").map(|s| s.chars().filter(|c| ('a'..='z').contains(c)).collect::<HashSet<char>>().len()).sum::<usize>()));
+    answers.push(format!("{}", input.split("\n\n").map(|s| ('a'..='z').filter(|c| s.lines().all(|l| l.chars().any(|i| *c == i))).count()).sum::<usize>()));
 
     return answers;
 }
@@ -12,7 +15,21 @@ mod tests {
 
     #[test]
     fn example1() {
-        let input = "".to_string();
-        assert_eq!(run(input), vec!["Not implemented yet.".to_string()]);
+        let input = "abc
+
+a
+b
+c
+
+ab
+ac
+
+a
+a
+a
+a
+
+b".to_string();
+        assert_eq!(run(input), vec!["11".to_string(), "6".to_string()]);
     }
 }
