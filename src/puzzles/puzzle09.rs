@@ -9,19 +9,21 @@ pub fn run(input: String) -> Vec<String> {
     let invalid_number = inputs.windows(26).find(|t| !t[0..25].iter().cartesian_product(t[0..25].iter()).any(|(a, b)| a != b && a + b == t[25])).unwrap()[25];
     answers.push(format!("{}", invalid_number));
 
-    for start_number in 0..inputs.len() {
-        let mut sum = *inputs.get(start_number).unwrap();
-        let mut end_number = start_number;
-        while sum < invalid_number && end_number + 1 < inputs.len() {
-            end_number += 1;
-            sum += *inputs.get(end_number).unwrap();
-        }
-        if sum == invalid_number {
-            answers.push(format!("{}", inputs.get(start_number..=end_number).unwrap().iter().min().unwrap() +
-                inputs.get(start_number..=end_number).unwrap().iter().max().unwrap()));
-            break;
+    let mut sum = *inputs.get(0).unwrap();
+    let mut start = 0;
+    let mut end = 0;
+    while sum != invalid_number && start < inputs.len() && end + 1 < inputs.len() {
+        if sum < invalid_number {  // If we need to add more numbers, extend the selection to the right
+            end += 1;
+            sum += *inputs.get(end).unwrap();
+        } else {  // If we need to remove some numbers, contract the selection from the left
+            sum -= *inputs.get(start).unwrap();
+            start += 1;
         }
     }
+    answers.push(format!("{}", inputs.get(start..=end).unwrap().iter().min().unwrap() +
+        inputs.get(start..=end).unwrap().iter().max().unwrap()));
+
 
     return answers;
 }
