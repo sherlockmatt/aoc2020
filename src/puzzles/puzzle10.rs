@@ -16,18 +16,19 @@ pub fn run(input: String) -> Vec<String> {
         if current_chunk.len() == 0 {
             current_chunk.push(i);
         } else {
-            let last = current_chunk.iter().last().unwrap();
-            if i - *last == 1 {
-                current_chunk.push(i);
-            } else if i - last == 3 {
-                chunks.push(current_chunk.clone());
-                current_chunk = vec![i];
-            }
+            match i - *current_chunk.iter().last().unwrap() {
+                1..=2 => current_chunk.push(i),
+                3 => {
+                    chunks.push(current_chunk.clone());
+                    current_chunk = vec![i];
+                },
+                _ => panic!("Oversized jump found: {} -> {}", current_chunk.iter().last().unwrap(), i)
+            };
         }
     }
     chunks.push(current_chunk);
 
-    answers.push(format!("{}", (chunks.iter().map(|c| c.len() - 1).sum::<usize>()) * chunks.len()));
+    answers.push(format!("{}", (chunks.iter().map(|c| 2 * (c.len() - 1) - ((c.last().unwrap() - c.first().unwrap()) as usize)).sum::<usize>()) * chunks.len()));
 
     // Calculate the number of ways we can traverse each chunk, and multiply them together for our answer
     answers.push(format!("{}", chunks.iter().map(|c| {
