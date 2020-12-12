@@ -4,6 +4,7 @@ use failure::_core::fmt;
 use failure::_core::cmp::{Reverse, Ordering};
 use std::collections::{HashMap, HashSet, BinaryHeap};
 use std::path::Path;
+use failure::_core::ops::{Mul, Add, AddAssign};
 
 pub fn download(puzzle_number: usize, session: &str) -> Result<String, Error> {
     let input_path_str = format!("./inputs/day{}.txt", puzzle_number);
@@ -71,6 +72,109 @@ impl fmt::Debug for Pos {
 impl Ord for Pos {
     fn cmp(&self, other: &Self) -> Ordering {
         self.distance_to(&Pos::new(0, 0)).cmp(&other.distance_to(&Pos::new(0, 0)))
+    }
+}
+
+impl Mul<usize> for Pos {
+    type Output = Pos;
+
+    fn mul(self, rhs: usize) -> Self::Output {
+        Pos { x: self.x * rhs, y: self.y * rhs }
+    }
+}
+
+impl Add<Pos> for Pos {
+    type Output = Pos;
+
+    fn add(self, rhs: Pos) -> Self::Output {
+        Pos { x: self.x + rhs.x, y: self.y + rhs.y }
+    }
+}
+
+impl AddAssign<Pos> for Pos {
+    fn add_assign(&mut self, rhs: Pos) {
+        *self = *self + rhs
+    }
+}
+
+impl Add<Vector> for Pos {
+    type Output = Pos;
+
+    fn add(self, rhs: Vector) -> Self::Output {
+        Pos { x: (self.x as i128 + rhs.dx as i128) as usize, y: (self.y as i128 + rhs.dy as i128) as usize }
+    }
+}
+
+impl AddAssign<Vector> for Pos {
+    fn add_assign(&mut self, rhs: Vector) {
+        *self = *self + rhs
+    }
+}
+
+#[derive(PartialEq, Eq, Clone, Copy, Hash, PartialOrd)]
+pub struct Vector {
+    pub dx: isize,
+    pub dy: isize
+}
+
+impl Vector {
+    #[allow(dead_code)]
+    pub fn new(dx: isize, dy: isize) -> Vector {
+        Vector { dx, dy }
+    }
+
+    pub fn rotate_cw(&mut self) {
+        *self = Vector {
+            dx: self.dy,
+            dy: -1 * self.dx
+        };
+    }
+
+    pub fn rotate_ccw(&mut self) {
+        *self = Vector {
+            dx: -1 * self.dy,
+            dy: self.dx
+        }
+    }
+
+    pub fn distance_to(&self, other: &Self) -> usize {
+        ((self.dx - other.dx).abs() + (self.dy - other.dy).abs()) as usize
+    }
+}
+
+impl fmt::Debug for Vector {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "({:?}, {:?})", self.dx, self.dy)
+    }
+}
+
+impl Mul<isize> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: isize) -> Self::Output {
+        Vector { dx: self.dx * rhs, dy: self.dy * rhs }
+    }
+}
+
+impl Mul<usize> for Vector {
+    type Output = Vector;
+
+    fn mul(self, rhs: usize) -> Self::Output {
+        Vector { dx: (self.dx as i128 * rhs as i128) as isize, dy: (self.dy as i128 * rhs as i128) as isize }
+    }
+}
+
+impl Add<Vector> for Vector {
+    type Output = Vector;
+
+    fn add(self, rhs: Vector) -> Self::Output {
+        Vector { dx: self.dx + rhs.dx, dy: self.dy + rhs.dy }
+    }
+}
+
+impl AddAssign<Vector> for Vector {
+    fn add_assign(&mut self, rhs: Vector) {
+        *self = *self + rhs
     }
 }
 
